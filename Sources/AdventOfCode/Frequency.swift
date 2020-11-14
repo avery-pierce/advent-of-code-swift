@@ -10,6 +10,8 @@ import Foundation
 struct Frequency<T: Hashable> {
     private var counts = [T: Int]()
     
+    init() {}
+    
     init<S: Sequence>(_ sequence: S) where S.Element == T {
         for element in sequence {
             increment(element)
