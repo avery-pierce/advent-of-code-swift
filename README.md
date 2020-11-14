@@ -1,3 +1,5 @@
-# AdventOfCode
+# Advent Of Code
 
-A description of this package.
+Command-line tool for solving Advent of Code problems. https://adventofcode.com
+
+
