@@ -52,4 +52,10 @@ struct Frequency<T: Hashable> {
     func values(where predicate: (Int) -> Bool) -> Set<T> {
         return Set(counts.filter({ return predicate($0.value) }).keys)
     }
+    
+    var mostFrequent: T? {
+        return counts.max { (left, right) -> Bool in
+            return left.value < right.value
+        }?.key
+    }
 }
