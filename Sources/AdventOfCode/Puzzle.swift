@@ -21,14 +21,19 @@ extension Puzzle {
         return testCasesA.count + testCasesB.count > 0
     }
     
-    var allTestsPass: Bool {
-        let aPasses = testCasesA.allSatisfy { (test) -> Bool in
+    var allATestsPass: Bool {
+        return testCasesA.allSatisfy { (test) -> Bool in
             return solveA(test.input) == test.expectedOutput
         }
-        let bPasses = testCasesB.allSatisfy { (test) -> Bool in
+    }
+    
+    var allBTestsPass: Bool {
+        return testCasesB.allSatisfy { (test) -> Bool in
             return solveB(test.input) == test.expectedOutput
         }
-        
-        return aPasses && bPasses
+    }
+    
+    var allTestsPass: Bool {
+        return allATestsPass && allBTestsPass
     }
 }

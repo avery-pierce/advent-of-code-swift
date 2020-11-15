@@ -49,10 +49,15 @@ struct AdventOfCode: ParsableCommand {
             print("Running test cases on A:")
             printTestResults(for: puzzle.testCasesA, using: puzzle.solveA(_:))
         }
-        print("Solving A:")
-        print("==========")
-        let solutionA = puzzle.solveA(puzzleInput)
-        print(solutionA)
+        
+        if (puzzle.allATestsPass) {
+            print("Solving A:")
+            print("==========")
+            let solutionA = puzzle.solveA(puzzleInput)
+            print(solutionA)
+        } else {
+            print("Test cases failed. Not attempting to solve")
+        }
         
         print("")
         
@@ -60,10 +65,14 @@ struct AdventOfCode: ParsableCommand {
             print("Running test cases on B:")
             printTestResults(for: puzzle.testCasesB, using: puzzle.solveB(_:))
         }
-        print("Solving B:")
-        print("==========")
-        let solutionB = puzzle.solveB(puzzleInput)
-        print(solutionB)
+        if (puzzle.allBTestsPass) {
+            print("Solving B:")
+            print("==========")
+            let solutionB = puzzle.solveB(puzzleInput)
+            print(solutionB)
+        } else {
+            print("Test cases failed. Not attempting to solve")
+        }
     }
     
     func getInput(for puzzle: Puzzle) -> Input {
