@@ -18,3 +18,7 @@ extension GridSize {
         self.height = Int(dims[1])!
     }
 }
+
+extension GridSize {
+    static var zero = GridSize(width: 0, height: 0)
+}

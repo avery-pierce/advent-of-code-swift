@@ -4,6 +4,11 @@ struct GridRect: Hashable {
     var origin: GridCoordinate
     var size: GridSize
     
+    var minX: Int { origin.x }
+    var minY: Int { origin.y }
+    var maxX: Int { origin.x + size.width }
+    var maxY: Int { origin.y + size.height }
+    
     init(_ origin: GridCoordinate, _ size: GridSize) {
         self.origin = origin
         self.size = size
@@ -26,8 +31,8 @@ struct GridRect: Hashable {
     
     var coordinates: Set<GridCoordinate> {
         var set = Set<GridCoordinate>()
-        for x in (origin.x..<(origin.x + size.width)) {
-            for y in (origin.y..<(origin.y + size.height)) {
+        for x in (minX..<maxX) {
+            for y in (minY..<maxY) {
                 set.insert(GridCoordinate(x: x, y: y))
             }
         }
@@ -52,3 +57,21 @@ extension GridRect {
     }
 }
 
+extension GridRect {
+    static var zero = GridRect(x: 0, y: 0, width: 0, height: 0)
+    
+    static func enclosing(_ coords: [GridCoordinate]) -> GridRect {
+        guard coords.count > 0 else { return .zero }
+        guard coords.count > 1 else { return GridRect(coords[0], .zero)}
+        
+        let allX = coords.map(\.x)
+        let allY = coords.map(\.y)
+        
+        let minX = allX.min()!
+        let minY = allY.min()!
+        let maxX = allX.max()!
+        let maxY = allY.max()!
+        
+        return GridRect(x1: minX, y1: minY, x2: maxX, y2: maxY)
+    }
+}

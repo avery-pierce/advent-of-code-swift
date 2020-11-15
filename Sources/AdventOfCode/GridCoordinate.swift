@@ -54,3 +54,6 @@ extension GridCoordinate {
     }
 }
 
+extension GridCoordinate {
+    static var zero = GridCoordinate(x: 0, y: 0)
+}
