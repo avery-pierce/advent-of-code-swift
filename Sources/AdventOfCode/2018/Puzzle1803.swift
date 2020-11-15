@@ -1,9 +1,11 @@
 
 import Foundation
 
-
-
 class Puzzle1803: Puzzle {
+    typealias Coordinate = GridCoordinate
+    typealias Size = GridSize
+    typealias Rect = GridRect
+    
     let name: String = "2018_03"
     
     func solveA(_ input: Input) -> String {
@@ -50,68 +52,6 @@ class Puzzle1803: Puzzle {
                     #3 @ 5,5: 2x2
                     """), expectedOutput: "#3")
     ]
-    
-    struct Coordinate: Hashable {
-        var top: Int
-        var left: Int
-        init(left: Int, top: Int) {
-            self.top = top
-            self.left = left
-        }
-        
-        init(descriptor: String) {
-            let coords = descriptor.split(separator: ",")
-            self.left = Int(coords[0])!
-            self.top = Int(coords[1])!
-        }
-    }
-    
-    struct Size: Hashable {
-        var width: Int
-        var height: Int
-        
-        init(width: Int, height: Int) {
-            self.width = width
-            self.height = height
-        }
-        
-        init(descriptor: String) {
-            let dims = descriptor.split(separator: "x")
-            self.width = Int(dims[0])!
-            self.height = Int(dims[1])!
-        }
-    }
-    
-    struct Rect: Hashable {
-        var origin: Coordinate
-        var size: Size
-        
-        init(_ origin: Coordinate, _ size: Size) {
-            self.origin = origin
-            self.size = size
-        }
-        
-        init(left: Int, top: Int, width: Int, height: Int) {
-            self.origin = Coordinate(left: left, top: top)
-            self.size = Size(width: width, height: height)
-        }
-        
-        init(descriptor: String) {
-            let dims = descriptor.split(separator: ":").map({ $0.trimmingCharacters(in: .whitespaces )})
-            self.origin = Coordinate(descriptor: dims[0])
-            self.size = Size(descriptor: dims[1])
-        }
-        
-        var coordinates: Set<Coordinate> {
-            var set = Set<Coordinate>()
-            for leftOffset in (origin.left..<(origin.left + size.width)) {
-                for topOffset in (origin.top..<(origin.top + size.height)) {
-                    set.insert(Coordinate(left: leftOffset, top: topOffset))
-                }
-            }
-            return set
-        }
-    }
     
     struct Claim {
         var id: String
