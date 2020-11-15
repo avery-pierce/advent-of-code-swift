@@ -21,7 +21,6 @@ class Puzzle1805: Puzzle {
         
         let testPolymers = allUnits.map { (char) -> (Character, String) in
             let filteredPolymer = input.text.filter({ $0.uppercased() != String(char) })
-            print("reducing \(char)")
             let reactor = Reactor(filteredPolymer)
             reactor.debugging = String(char) == "O"
             reactor.completelyReducerPolymer()
@@ -64,7 +63,6 @@ class Puzzle1805: Puzzle {
         
         /// Returns true if there was at least one reaction this pass.
         func scanThroughPolymerRemovingReactions() -> Bool {
-            print("\(polymer.count) Units")
             cursor = polymer.startIndex
             var foundReactionThisPass = false
             repeat {
