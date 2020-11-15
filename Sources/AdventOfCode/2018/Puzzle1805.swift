@@ -97,60 +97,6 @@ class Puzzle1805: Puzzle {
             cursor = polymer.index(cursor, offsetBy: offset)
         }
     }
-    
-    func recursivelyRemoveAllReactions(in string: String) -> String {
-        let newString = removeAllReactions(in: string)
-        
-        if (newString == string) {
-            // All done
-            return string
-        } else {
-            // Go again
-            print("\(newString.count) units")
-            return recursivelyRemoveAllReactions(in: newString)
-        }
-    }
-    
-    func removeFirstReaction(in string: String) -> String {
-        let ranges = allReactions(in: string)
-        guard ranges.count > 0 else { return string }
-        
-        var newString = string
-        newString.removeSubrange(ranges[0])
-        return newString
-    }
-    
-    func removeAllReactions(in string: String) -> String {
-        let ranges = allReactions(in: string).reversed()
-        guard ranges.count > 0 else { return string }
-        
-        var newString = string
-        ranges.forEach { (range) in
-            newString.removeSubrange(range)
-        }
-        return newString
-    }
-    
-    func allReactions(in string: String) -> [ClosedRange<String.Index>] {
-        var ranges = [ClosedRange<String.Index>]()
-        var skipOne = false
-        for (index, char) in string.enumerated() {
-            if skipOne {
-                skipOne = false
-                continue
-            }
-            if index + 1 == string.count { break }
-            
-            let currentIndex = string.index(string.startIndex, offsetBy: index)
-            let nextCharIndex = string.index(currentIndex, offsetBy: 1)
-            let nextChar = string[nextCharIndex]
-            if reacts(char, nextChar) {
-                ranges.append(currentIndex...nextCharIndex)
-                skipOne = true
-            }
-        }
-        return ranges
-    }
 }
 
 func reacts(_ char1: Character, _ char2: Character) -> Bool {
