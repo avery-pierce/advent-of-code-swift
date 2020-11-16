@@ -35,7 +35,12 @@ class Puzzle1807: Puzzle {
         let numWorkers = isTesting ? 2 : 5
         let baseWorkTimePerStep = isTesting ? 0 : 60
         
-        return "unsolved"
+        let rules = input.lines.map(Rule.init(descriptor:))
+        let graph = Graph(rules)
+        let dispatcher = WorkDispatcher(graph, numberOfWorkers: numWorkers, baseWorkTimePerStep: baseWorkTimePerStep)
+        dispatcher.completeAllWork()
+        
+        return "\(dispatcher.clock)"
     }
     
     var testCasesB: [TestCase] = [
@@ -49,6 +54,86 @@ class Puzzle1807: Puzzle {
                     Step F must be finished before step E can begin.
                     """), expectedOutput: "15")
     ]
+    
+    class WorkDispatcher {
+        var graph: Graph
+        var numberOfWorkers: Int
+        var baseWorkTimePerStep: Int
+        var clock = 0
+        
+        struct Worker {
+            var step: String
+            var completedBy: Int
+        }
+        var workers = [Worker]()
+        var activeWorkers: [Worker] {
+            workers.filter({ !isComplete($0) })
+        }
+        var availableCapacity: Int {
+            return numberOfWorkers - activeWorkers.count
+        }
+        
+        init(_ graph: Graph, numberOfWorkers: Int, baseWorkTimePerStep: Int) {
+            self.graph = graph
+            self.numberOfWorkers = numberOfWorkers
+            self.baseWorkTimePerStep = baseWorkTimePerStep
+        }
+        
+        func timeToComplete(_ step: String) -> Int {
+            let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            let index = alphabet.firstIndex(of: Character(step))!
+            return alphabet.distance(from: alphabet.startIndex, to: index) + 1 + baseWorkTimePerStep
+        }
+        
+        func advanceClock() {
+            clock += 1
+        }
+        
+        func isComplete(_ worker: Worker) -> Bool {
+            return clock >= worker.completedBy
+        }
+        
+        func markTasksAsCompleted() {
+            let completeWorkers = workers.filter({ isComplete($0) })
+            completeWorkers.forEach({ graph.completeStep($0.step) })
+        }
+        
+        func isStepAssigned(_ step: String) -> Bool {
+            let assignedWorker = workers.first(where: { $0.step == step })
+            return assignedWorker != nil
+        }
+        
+        var availableWork: [String] {
+            return graph.unblockedSteps.filter({ !isStepAssigned($0) })
+        }
+        
+        var nextTask: String? {
+            guard availableWork.count > 0 else { return nil }
+            return availableWork[0]
+        }
+        
+        func assignWorkers() {
+            while availableCapacity > 0 && availableWork.count > 0 {
+                dispatchWorker()
+            }
+        }
+        
+        func dispatchWorker() {
+            let task = nextTask!
+            let completion = clock + timeToComplete(task)
+            let newWorker = Worker(step: task, completedBy: completion)
+            workers.append(newWorker)
+        }
+        
+        func completeAllWork() {
+            assignWorkers()
+            repeat {
+                advanceClock()
+                markTasksAsCompleted()
+                assignWorkers()
+            } while !graph.incompleteSteps.isEmpty
+        }
+    }
     
     class Graph {
         var rules: [Rule]
