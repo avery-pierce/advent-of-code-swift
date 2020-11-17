@@ -5,7 +5,6 @@ class Puzzle1809: Puzzle {
     let name: String = "2018_09"
     
     func solveA(_ input: Input) -> String {
-//        return ""
         let words = input.text.split(separator: " ")
         let numberOfPlayers = Int(words[0])!
         let numberOfPoints = Int(words[6])!
@@ -58,7 +57,7 @@ class Puzzle1809: Puzzle {
             while _index <= 0 {
                 _index += array.count
             }
-            while _index >= array.count {
+            while _index > array.count {
                 _index -= array.count
             }
             return _index
@@ -68,8 +67,8 @@ class Puzzle1809: Puzzle {
             array.insert(value, at: resolve(index: index))
         }
         
-        mutating func remove(at index: Int) {
-            array.remove(at: resolve(index: index))
+        mutating func remove(at index: Int) -> T {
+            return array.remove(at: resolve(index: index))
         }
         
         func firstIndex(of element: T) -> Int? {
@@ -89,31 +88,17 @@ class Puzzle1809: Puzzle {
     }
     
     class MarbleMat {
-        var currentMarble: Marble!
-        var currentMarbleIndex: Int! {
-            get {
-                return marbles.firstIndex(of: currentMarble)
-            }
-            set {
-                guard let index = newValue else {
-                    currentMarble = nil
-                    return
-                }
-                
-                currentMarble = marbles[index]
-            }
-        }
+        var currentMarbleIndex: Int!
         var marbles: CircularArray<Marble>
         var drawPile: [Marble]
         
         init(numberOfMarbles: Int) {
-            self.currentMarble = nil
             self.marbles = CircularArray()
-            self.drawPile = (0..<numberOfMarbles).map(Marble.init)
+            self.drawPile = (0..<numberOfMarbles).reversed().map(Marble.init)
         }
         
         // Adds a marble, and returns the number of points (if any) it awards.
-        func addMarble() -> Int {
+        func takeTurn() -> Int {
             guard let nextMarble = drawMarble() else { return 0 }
             if nextMarble.number == 0 {
                 marbles.insert(nextMarble, at: 0)
@@ -121,26 +106,37 @@ class Puzzle1809: Puzzle {
                 return 0
             }
             
+            if nextMarble.number == 1 {
+                marbles.insert(nextMarble, at: 1)
+                currentMarbleIndex = 1
+                return 0
+            }
+            
             if (nextMarble.number % 23 == 0) {
-                // Player keeps the marble
-                let takeIndex = currentMarbleIndex - 7
-                let nextCurrentMarble = marbles[takeIndex + 1]
-                let scoringMarble = marbles[takeIndex]
-                marbles.remove(at: takeIndex)
-                currentMarble = nextCurrentMarble
-                return nextMarble.number + scoringMarble.number
-                
+                return scoreMarble(nextMarble)
             } else {
-                let insertIndex = currentMarbleIndex + 2
-                marbles.insert(nextMarble, at: insertIndex)
-                currentMarble = nextMarble
+                addMarble(nextMarble)
                 return 0
             }
         }
         
         func drawMarble() -> Marble? {
-            guard drawPile.count > 0 else { return nil }
-            return drawPile.remove(at: 0)
+            return drawPile.popLast()
+//            guard drawPile.count > 0 else { return nil }
+//            return drawPile.remove(at: 0)
+        }
+        
+        func addMarble(_ nextMarble: Marble) {
+            // When you add a marble, the current marble is the added marble
+            currentMarbleIndex = marbles.resolve(index: currentMarbleIndex + 2)
+            marbles.insert(nextMarble, at: currentMarbleIndex)
+        }
+        
+        func scoreMarble(_ nextMarble: Marble) -> Int {
+            // Player keeps the marble
+            currentMarbleIndex = marbles.resolve(index: currentMarbleIndex - 7)
+            let scoringMarble = marbles.remove(at: currentMarbleIndex)
+            return nextMarble.number + scoringMarble.number
         }
     }
     
@@ -160,9 +156,9 @@ class Puzzle1809: Puzzle {
         func playThrough() {
             while turn <= highestScoringMarble {
                 if (turn % 1000 == 0) {
-//                    print("Turn #\(turn)/\(highestScoringMarble) (\(turn * 100/highestScoringMarble)%)")
+                    print("Turn #\(turn)/\(highestScoringMarble) (\(turn * 100/highestScoringMarble)%)")
                 }
-                let score = gameMat.addMarble()
+                let score = gameMat.takeTurn()
                 scores[currentPlayer] += score
                 turn += 1
             }
