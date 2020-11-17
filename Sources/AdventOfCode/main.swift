@@ -100,9 +100,12 @@ struct AdventOfCode: ParsableCommand {
     
     func printTestResults(for tests: [TestCase], using solver: (Input) -> String) {
         for (i, test) in tests.enumerated() {
+            let startTime = Date()
             let result = solver(test.input)
+            let endTime = Date()
+            let duration = endTime.timeIntervalSince(startTime)
             let passes = result == test.expectedOutput
-            print("\(i): \(passes ? "✅" : "❌")")
+            print("\(i): \(passes ? "✅" : "❌") (\(formatDuration(duration)))")
             if !passes {
                 print("  expected: \(test.expectedOutput)")
                 print("    actual: \(result)")
@@ -112,6 +115,26 @@ struct AdventOfCode: ParsableCommand {
 }
 
 AdventOfCode.main()
+
+func formatDuration(_ duration: TimeInterval) -> String {
+    if (duration < 1) {
+        let ms = duration * 1000
+        
+        return "\(round(ms)) ms"
+    } else if (duration < 60) {
+        return "\(roundToDecimalPlaces(duration, decimalPlaces: 2)) s"
+    } else {
+        let mins = duration / 60
+        return "\(roundToDecimalPlaces(mins, decimalPlaces: 2))"
+    }
+}
+
+func roundToDecimalPlaces(_ number: Double, decimalPlaces: Int) -> Double {
+    let multiplier = Double(10 ^ decimalPlaces)
+    let shiftedNumber = number * multiplier
+    let rounded = round(shiftedNumber)
+    return rounded / multiplier
+}
 
 func selectPuzzle(named name: String) -> Puzzle? {
     return gatherPuzzles().first(where: { $0.name == name })
