@@ -9,6 +9,10 @@ struct GridRect: Hashable {
     var maxX: Int { origin.x + size.width }
     var maxY: Int { origin.y + size.height }
     
+    var width: Int { size.width }
+    var height: Int { size.width }
+    var area: Int { width * height }
+    
     init(_ origin: GridCoordinate, _ size: GridSize) {
         self.origin = origin
         self.size = size
