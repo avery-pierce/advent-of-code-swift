@@ -39,7 +39,7 @@ class TextInput: Input {
 class LinesInput: Input {
     var lines: [String]
     init(_ lines: [String]) {
-        self.lines = lines.map({ $0.trimmingCharacters(in: .whitespacesAndNewlines )})
+        self.lines = lines.map({ $0.trimmingCharacters(in: .newlines )})
     }
     
     lazy var text: String = {
