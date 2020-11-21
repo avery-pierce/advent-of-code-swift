@@ -49,7 +49,42 @@ class Puzzle1812: Puzzle {
     ]
     
     func solveB(_ input: Input) -> String {
-        return "unsolved"
+        let (initialState, rules) = parseInput(input: input)
+        let ruleBook = RuleBook(rules)
+        
+        var iteration = initialState
+        
+        let startingPots = (0..<20).map({ _ in Pot.empty })
+        let bunchOfEmptyPots = (0..<120).map({ _ in Pot.empty })
+        let indexOffset = startingPots.count
+        iteration.insert(contentsOf: startingPots, at: 0)
+        iteration.append(contentsOf: bunchOfEmptyPots)
+        
+        print("\(render(iteration)) :0")
+        let max = 100
+        for i in (1...max) {
+            let nextIteration = iterate(from: iteration, ruleBook: ruleBook)
+            iteration = nextIteration
+            
+            print("\(render(iteration)) :\(i)")
+            
+            if (i % 10_000 == 0) {
+                print("\(i)/\(max) (\(i/max)%)")
+            }
+        }
+        
+        // Around 100 iterations, it settles on a specific pattern where the next generation is a copy
+        // of the previous generation, but with each plant moved one space to the right.
+        // With this information, we can take a shortcut – count the number of plants, multiply that by
+        // the number remaining iterations, and add that product to the sum of indexes the plants currently have.
+        let goalIterations = 50_000_000_000 // Fifty billion
+        let currentSum = sumOfFilledPots(iteration, indexOffset: indexOffset)
+        let countPlants = iteration.filter(\.isFilled).count
+        let remainingIterations = goalIterations - max
+        let projectedSum = remainingIterations * countPlants
+        let finalSum = projectedSum + currentSum
+        
+        return "\(finalSum)"
     }
     
     var testCasesB: [TestCase] = [
