@@ -57,3 +57,14 @@ extension GridCoordinate {
 extension GridCoordinate {
     static var zero = GridCoordinate(x: 0, y: 0)
 }
+
+extension GridCoordinate {
+    // A sort function
+    static func inReadingOrder(_ lhs: GridCoordinate, _ rhs: GridCoordinate) -> Bool {
+        if lhs.y == rhs.y {
+            return lhs.x < rhs.x
+        } else {
+            return lhs.y < rhs.y
+        }
+    }
+}

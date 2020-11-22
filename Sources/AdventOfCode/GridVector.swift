@@ -13,6 +13,13 @@ struct GridVector {
 }
 
 extension GridVector {
+    static let north = GridVector(dx: 0, dy: -1)
+    static let south = GridVector(dx: 0, dy: 1)
+    static let east = GridVector(dx: 1, dy: 0)
+    static let west = GridVector(dx: -1, dy: 0)
+}
+
+extension GridVector {
     func multiplied(by factor: Int) -> GridVector {
         var newVector = self
         newVector.dx = self.dx * factor
