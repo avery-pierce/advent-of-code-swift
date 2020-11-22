@@ -31,7 +31,6 @@ class Puzzle1814: Puzzle {
             simulation.tick()
             
             let scoreCount = simulation.scores.count
-            previousCount = scoreCount
             if scoreCount < check.count { continue }
             
             let startIndex = scoreCount - check.count
