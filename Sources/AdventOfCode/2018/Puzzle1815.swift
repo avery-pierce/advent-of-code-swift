@@ -74,14 +74,76 @@ class Puzzle1815: Puzzle {
     ]
     
     func solveB(_ input: Input) -> String {
-        return "unsolved"
+        
+        var testPowerLevel = 4
+        while true {
+            print("Starting battle at power level \(testPowerLevel)")
+            let (battleField, combatants) = parseInput(input, elfPowerLevel: testPowerLevel)
+            let sim = BattleSimulation(battleField: battleField, combatants: combatants)
+            sim.battleUntilOneElfDiesOrElvesWin()
+            
+            if sim.deadElves.count == 0 && sim.winningTeam == .elf {
+                print("Power level: \(testPowerLevel), Rounds: \(sim.rounds), HP sum: \(sim.livingCombatants.map(\.hp).reduce(0, +)), winner: \(sim.winningTeam.debugDescription)")
+                print("outcome: \(sim.computeOutcome())")
+                return "\(sim.computeOutcome())"
+                
+            } else {
+                testPowerLevel += 1
+            }
+        }
     }
     
     var testCasesB: [TestCase] = [
-        // Input test cases here
+        TestCase(TextInput("""
+                    #######
+                    #.G...#
+                    #...EG#
+                    #.#.#G#
+                    #..G#E#
+                    #.....#
+                    #######
+                    """), expectedOutput: "4988"),
+        TestCase(TextInput("""
+                    #######
+                    #E..EG#
+                    #.#G.E#
+                    #E.##E#
+                    #G..#.#
+                    #..E#.#
+                    #######
+                    """), expectedOutput: "31284"),
+        TestCase(TextInput("""
+                    #######
+                    #E.G#.#
+                    #.#G..#
+                    #G.#.G#
+                    #G..#.#
+                    #...E.#
+                    #######
+                    """), expectedOutput: "3478"),
+        TestCase(TextInput("""
+                    #######
+                    #.E...#
+                    #.#..G#
+                    #.###.#
+                    #E#G#G#
+                    #...#G#
+                    #######
+                    """), expectedOutput: "6474"),
+        TestCase(TextInput("""
+                    #########
+                    #G......#
+                    #.E.#...#
+                    #..##..G#
+                    #...##..#
+                    #...#...#
+                    #.G...G.#
+                    #.....G.#
+                    #########
+                    """), expectedOutput: "1140"),
     ]
     
-    func parseInput(_ input: Input) -> (battleField: [GridCoordinate: TileKind], combatants: [Combatant]) {
+    func parseInput(_ input: Input, elfPowerLevel: Int = 3) -> (battleField: [GridCoordinate: TileKind], combatants: [Combatant]) {
         var battleField = [GridCoordinate: TileKind]()
         var combatants = [Combatant]()
         
@@ -95,7 +157,7 @@ class Puzzle1815: Puzzle {
                     combatants.append(.goblin(at: coord))
                     
                 case "E":
-                    combatants.append(.elf(at: coord))
+                    combatants.append(.elf(at: coord, powerLevel: elfPowerLevel))
                     
                 default:
                     break
@@ -122,8 +184,10 @@ class Puzzle1815: Puzzle {
         }
         
         var livingCombatants: [Combatant] { combatants.filter(\.isAlive) }
+        var deadCombatants: [Combatant] { combatants.filter(\.isDead)}
         var elves: [Combatant] { livingCombatants.filter(\.isElf) }
         var goblins: [Combatant] { livingCombatants.filter(\.isGoblin) }
+        var deadElves: [Combatant] { deadCombatants.filter(\.isElf) }
         
         var winningTeam: Combatant.Alignment? {
             if elves.isEmpty { return .goblin }
@@ -214,6 +278,18 @@ class Puzzle1815: Puzzle {
             print("Start")
             print(renderState())
             while !isComplete {
+                round()
+                print("")
+                print("After round \(rounds)")
+                print(renderState())
+            }
+        }
+        
+        func battleUntilOneElfDiesOrElvesWin() {
+            rounds = 0
+            print("Start")
+            print(renderState())
+            while !isComplete && deadElves.count == 0 {
                 round()
                 print("")
                 print("After round \(rounds)")
@@ -365,16 +441,18 @@ class Puzzle1815: Puzzle {
         }
         
         var hp: Int = 200
-        var power: Int = 3
+        var power: Int
         var isAlive: Bool { hp > 0 }
+        var isDead: Bool { return !isAlive }
         
-        init(at coordinate: GridCoordinate, alignedWith alignment: Alignment) {
+        init(at coordinate: GridCoordinate, alignedWith alignment: Alignment, powerLevel: Int = 3) {
             self.coordinate = coordinate
             self.alignment = alignment
+            self.power = powerLevel
         }
         
-        static func elf(at coordinate: GridCoordinate) -> Combatant {
-            return Combatant(at: coordinate, alignedWith: .elf)
+        static func elf(at coordinate: GridCoordinate, powerLevel: Int) -> Combatant {
+            return Combatant(at: coordinate, alignedWith: .elf, powerLevel: powerLevel)
         }
         
         static func goblin(at coordinate: GridCoordinate) -> Combatant {
