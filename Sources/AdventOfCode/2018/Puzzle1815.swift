@@ -182,7 +182,7 @@ class Puzzle1815: Puzzle {
             }
         }
         
-        func stepsToReachTiles(from coordinate: GridCoordinate) -> [GridCoordinate: Int] {
+        func stepsToReachTiles(from coordinate: GridCoordinate, stoppingAt targetCoordinate: GridCoordinate? = nil) -> [GridCoordinate: Int] {
             var steps = [GridCoordinate: Int]()
             steps[coordinate] = 0
             
@@ -195,6 +195,11 @@ class Puzzle1815: Puzzle {
                 
                 for newCoord in nextFrontier {
                     steps[newCoord] = stepCounter
+                }
+                
+                // Stop early if we have the target coordinate
+                if let target = targetCoordinate, steps[target] != nil {
+                    break
                 }
                 
                 currentFrontier = nextFrontier
@@ -265,30 +270,28 @@ class Puzzle1815: Puzzle {
                 .sorted(by: GridCoordinate.inReadingOrder)
             
             let selectedDestination = closestSquares[0]
-            
-            let paths = shortestPaths(from: combatant.coordinate, to: selectedDestination)
-            let nextStepChoices = Set(paths.compactMap({ $0.firstStep }))
-            let rankedOptions = nextStepChoices.sorted(by: GridCoordinate.inReadingOrder(_:_:))
-            let selectedNextStep = rankedOptions[0]
-            combatant.coordinate = selectedNextStep
+            move(combatant, oneStepTowards: selectedDestination)
         }
         
         func sortCombatantsInReadingOrder() {
             combatants.sort(by: { GridCoordinate.inReadingOrder($0.coordinate, $1.coordinate) })
         }
         
-        func shortestPaths(from origin: GridCoordinate, to destination: GridCoordinate, excluding coveredTiles: Set<GridCoordinate> = Set()) -> [Path] {
-            if (origin == destination) {
-                return [Path([origin])]
+        func move(_ combatant: Combatant, oneStepTowards destination: GridCoordinate) {
+            let options = passableTiles(inRangeOf: combatant.coordinate)
+            let stepsToReachDestination = options.compactMap { (origin) -> (coordinate: GridCoordinate, length: Int)? in
+                guard let length = stepsToReachTiles(from: origin, stoppingAt: destination)[destination] else { return nil }
+                return (coordinate: origin, length: length)
             }
             
-            let coveredTilesPlusOrigin = coveredTiles.union(Set([origin]))
-            let tilesInRangeOfOrigin = passableTiles(inRangeOf: origin).filter({ !coveredTilesPlusOrigin.contains($0) })
-            let shortPaths = tilesInRangeOfOrigin.flatMap({ shortestPaths(from: $0, to: destination, excluding: coveredTilesPlusOrigin)})
-            let shortestLength = shortPaths.map({ $0.length }).min()
-            return shortPaths
-                .filter({ $0.length == shortestLength })
-                .map({ $0.prepending(origin) })
+            guard let minLength = stepsToReachDestination.map(\.length).min() else { return }
+            
+            let selectedCoordinate = stepsToReachDestination
+                .filter({ $0.length == minLength })
+                .map(\.coordinate)
+                .min(by: GridCoordinate.inReadingOrder(_:_:))!
+            
+            combatant.coordinate = selectedCoordinate
         }
         
         func computeOutcome() -> Int {
