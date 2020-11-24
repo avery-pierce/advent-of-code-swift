@@ -35,8 +35,8 @@ struct GridRect: Hashable {
     
     var coordinates: Set<GridCoordinate> {
         var set = Set<GridCoordinate>()
-        for x in (minX..<maxX) {
-            for y in (minY..<maxY) {
+        for x in (minX...maxX) {
+            for y in (minY...maxY) {
                 set.insert(GridCoordinate(x: x, y: y))
             }
         }
@@ -65,8 +65,12 @@ extension GridRect {
     static var zero = GridRect(x: 0, y: 0, width: 0, height: 0)
     
     static func enclosing(_ coords: [GridCoordinate]) -> GridRect {
+        return enclosing(Set(coords))
+    }
+    
+    static func enclosing(_ coords: Set<GridCoordinate>) -> GridRect {
         guard coords.count > 0 else { return .zero }
-        guard coords.count > 1 else { return GridRect(coords[0], .zero)}
+        guard coords.count > 1 else { return GridRect(Array(coords)[0], .zero)}
         
         let allX = coords.map(\.x)
         let allY = coords.map(\.y)
@@ -77,5 +81,24 @@ extension GridRect {
         let maxY = allY.max()!
         
         return GridRect(x1: minX, y1: minY, x2: maxX, y2: maxY)
+    }
+    
+    func encloses(_ coord: GridCoordinate) -> Bool {
+        let withinX = coord.x >= minX && coord.x <= maxX
+        let withinY = coord.y >= minY && coord.y <= maxY
+        return withinX && withinY
+    }
+}
+
+extension GridRect {
+    func render(_ renderChar: (GridCoordinate) -> Character) -> String {
+        let lines = (minY...maxY).map { (y) -> String in
+            let chars = (minX...maxX)
+                .map({ GridCoordinate(x: $0, y: y) })
+                .map(renderChar)
+            return String(chars)
+        }
+        
+        return lines.joined(separator: "\n")
     }
 }

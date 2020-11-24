@@ -17,6 +17,11 @@ extension GridVector {
     static let south = GridVector(dx: 0, dy: 1)
     static let east = GridVector(dx: 1, dy: 0)
     static let west = GridVector(dx: -1, dy: 0)
+    
+    static let up = north
+    static let down = south
+    static let left = west
+    static let right = east
 }
 
 extension GridVector {
