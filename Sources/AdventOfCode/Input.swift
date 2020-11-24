@@ -17,7 +17,7 @@ class DataInput: Input {
     }()
     
     lazy var lines: [String] = {
-        return text.split(separator: "\n").map(String.init)
+        return text.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
     }()
 }
 
@@ -32,7 +32,7 @@ class TextInput: Input {
     }()
     
     lazy var lines: [String] = {
-        return text.split(separator: "\n").map(String.init)
+        return text.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
     }()
 }
 
