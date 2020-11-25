@@ -94,123 +94,16 @@ class Puzzle1816: Puzzle {
             self.init(numbers)
         }
     }
-    
-    struct OpcodeInstruction {
-        var opcode: Opcode
-        var a: Int
-        var b: Int
-        var c: Int
-        
-        static func from(_ instruction: UnknownOpcodeInstruction) -> OpcodeInstruction {
-            return OpcodeInstruction(opcode: Opcode(instruction.opcode), a: instruction.a, b: instruction.b, c: instruction.c)
-        }
-        
-        static func allVariations(of instruction: UnknownOpcodeInstruction) -> [OpcodeInstruction] {
-            return Opcode.allCases.map { (opcode) -> OpcodeInstruction in
-                return OpcodeInstruction(opcode: opcode, a: instruction.a, b: instruction.b, c: instruction.c)
-            }
-        }
-        
-        func apply(to register: [Int]) -> [Int] {
-            var reg = register
-            
-            switch opcode {
-            case .addr:
-                reg[c] = reg[a] + reg[b]
-            case .addi:
-                reg[c] = reg[a] + b
-                
-            case .mulr:
-                reg[c] = reg[a] * reg[b]
-            case .muli:
-                reg[c] = reg[a] * b
-                
-            case .banr:
-                reg[c] = reg[a] & reg[b]
-            case .bani:
-                reg[c] = reg[a] & b
-                
-            case .borr:
-                reg[c] = reg[a] | reg[b]
-            case .bori:
-                reg[c] = reg[a] | b
-                
-            case .setr:
-                reg[c] = reg[a]
-            case .seti:
-                reg[c] = a
-                
-            case .gtir:
-                reg[c] = a > reg[b] ? 1 : 0
-            case .gtri:
-                reg[c] = reg[a] > b ? 1 : 0
-            case .gtrr:
-                reg[c] = reg[a] > reg[b] ? 1 : 0
-                
-            case .eqir:
-                reg[c] = a == reg[b] ? 1 : 0
-            case .eqri:
-                reg[c] = reg[a] == b ? 1 : 0
-            case .eqrr:
-                reg[c] = reg[a] == reg[b] ? 1 : 0
-            }
-            
-            return reg
-        }
+}
+
+extension OpcodeInstruction {
+    static func from(_ instruction: Puzzle1816.UnknownOpcodeInstruction) -> OpcodeInstruction {
+        return OpcodeInstruction(opcode: Opcode(rawValue: instruction.opcode)!, a: instruction.a, b: instruction.b, c: instruction.c)
     }
     
-    enum Opcode: CaseIterable {
-        static let lookup: [Int: Opcode] = [
-            0: .gtrr,
-            1: .borr,
-            2: .gtir,
-            3: .eqri,
-            4: .addr,
-            5: .seti,
-            6: .eqrr,
-            7: .gtri,
-            8: .banr,
-            9: .addi,
-            10: .setr,
-            11: .mulr,
-            12: .bori,
-            13: .muli,
-            14: .eqir,
-            15: .bani,
-        ]
-        
-        static var allUnknownCases: [Opcode] {
-            let allKnownCases = Set(lookup.values)
-            return allCases.filter({ !allKnownCases.contains($0) })
+    static func allVariations(of instruction: Puzzle1816.UnknownOpcodeInstruction) -> [OpcodeInstruction] {
+        return Opcode.allCases.map { (opcode) -> OpcodeInstruction in
+            return OpcodeInstruction(opcode: opcode, a: instruction.a, b: instruction.b, c: instruction.c)
         }
-        
-        init(_ int: Int) {
-            self = Opcode.lookup[int]!
-        }
-        
-        case addr
-        case addi
-        
-        case mulr
-        case muli
-        
-        case banr
-        case bani
-        
-        case borr
-        case bori
-        
-        case setr
-        case seti
-        
-        case gtir
-        case gtri
-        case gtrr
-        
-        case eqir
-        case eqri
-        case eqrr
-        
-        
     }
 }
