@@ -41,3 +41,9 @@ extension GridCoordinate {
         return newCoord
     }
 }
+
+extension GridVector {
+    static func + (left: GridVector, right: GridVector) -> GridVector {
+        return GridVector(dx: left.dx + right.dx, dy: left.dy + right.dy)
+    }
+}
