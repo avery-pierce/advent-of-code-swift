@@ -8,6 +8,35 @@
 import Foundation
 
 enum Opcode: Int, CaseIterable {
+    init?(stringValue: String) {
+        switch stringValue {
+        case "addr": self = .addr
+        case "addi": self = .addi
+            
+        case "mulr": self = .mulr
+        case "muli": self = .muli
+            
+        case "banr": self = .banr
+        case "bani": self = .bani
+            
+        case "borr": self = .borr
+        case "bori": self = .bori
+            
+        case "setr": self = .setr
+        case "seti": self = .seti
+            
+        case "gtir": self = .gtir
+        case "grri": self = .gtri
+        case "gtrr": self = .gtrr
+            
+        case "eqir": self = .eqir
+        case "eqri": self = .eqri
+        case "eqrr": self = .eqrr
+            
+        default: return nil
+        }
+    }
+    
     case addr = 4
     case addi = 9
     
@@ -87,13 +116,37 @@ struct OpcodeInstruction {
 }
 
 class OpcodeComputer {
+    var instructionPointerIndex: Int? = nil
     var register: [Int] = [0, 0, 0, 0, 0, 0]
     
     func process(_ instructions: [OpcodeInstruction]) {
-        register = instructions.reduce(register, opcodeReducer(previousRegister:nextInstruction:))
+        if let ip = instructionPointerIndex {
+            while true {
+                let instruction = instructions[instructionIndex!]
+                process(instruction)
+                
+                let nextIndex = instructionIndex! + 1
+                guard nextIndex >= 0 && nextIndex < instructions.count else { break }
+                register[ip] += 1
+            }
+        } else {
+            for instruction in instructions {
+                process(instruction)
+            }
+        }
     }
     
-    func opcodeReducer(previousRegister: [Int], nextInstruction: OpcodeInstruction) -> [Int] {
-        return nextInstruction.apply(to: previousRegister)
+    var instructionIndex: Int? {
+        guard let index = instructionPointerIndex else { return nil }
+        return register[index]
+    }
+    
+    func process(_ instruction: OpcodeInstruction) {
+        register = instruction.apply(to: register)
+    }
+    
+    func incrementInstructionPointerIfNeeded() {
+        guard let index = instructionPointerIndex else { return }
+        register[index] += 1
     }
 }
