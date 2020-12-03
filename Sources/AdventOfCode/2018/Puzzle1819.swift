@@ -23,6 +23,7 @@ class Puzzle1819: Puzzle {
         }
         
         computer.process(instructions)
+        print(computer.register)
         return "\(computer.register[0])"
     }
     
