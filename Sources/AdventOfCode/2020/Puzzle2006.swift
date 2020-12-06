@@ -49,7 +49,6 @@ class Puzzle2006: Puzzle {
             return matches
         }
         
-        
         let sum = sets.map(\.count).reduce(0, +)
         return "\(sum)"
     }
