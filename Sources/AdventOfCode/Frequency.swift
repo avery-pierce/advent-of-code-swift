@@ -59,3 +59,17 @@ struct Frequency<T: Hashable> {
         }?.key
     }
 }
+
+extension Frequency {
+    mutating func increment<C: Collection>(membersOf collection: C) where C.Element == T {
+        for member in collection {
+            increment(member)
+        }
+    }
+    
+    mutating func decrement<C: Collection>(membersOf collection: C) where C.Element == T {
+        for member in collection {
+            decrement(member)
+        }
+    }
+}

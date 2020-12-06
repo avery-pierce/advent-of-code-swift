@@ -9,7 +9,7 @@ class Puzzle2006: Puzzle {
         let sets = groups.map { (group) -> Set<Character> in
             var set = Set<Character>()
             for member in group {
-                set = set.union(member)
+                set.insert(membersOf: member)
             }
             return set
         }
@@ -42,9 +42,7 @@ class Puzzle2006: Puzzle {
         let sets = groups.map { (group) -> Set<Character> in
             var freq = Frequency<Character>()
             for member in group {
-                for char in member {
-                    freq.increment(char)
-                }
+                freq.increment(membersOf: member)
             }
             
             let matches = freq.values(where: { $0 == group.count})
