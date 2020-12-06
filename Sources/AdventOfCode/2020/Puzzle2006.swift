@@ -5,18 +5,74 @@ class Puzzle2006: Puzzle {
     let name: String = "2020_06"
     
     func solveA(_ input: Input) -> String {
-        return "unsolved"
+        let groups = input.lines.split(separator: "")
+        let sets = groups.map { (group) -> Set<Character> in
+            var set = Set<Character>()
+            for member in group {
+                set = set.union(member)
+            }
+            return set
+        }
+        let sum = sets.map(\.count).reduce(0, +)
+        return "\(sum)"
     }
     
     var testCasesA: [TestCase] = [
-        // Input test cases here
+        TestCase(TextInput("""
+                    abc
+                    
+                    a
+                    b
+                    c
+                    
+                    ab
+                    ac
+                    
+                    a
+                    a
+                    a
+                    a
+                    
+                    b
+                    """), expectedOutput: "11")
     ]
     
     func solveB(_ input: Input) -> String {
-        return "unsolved"
+        let groups = input.lines.split(separator: "")
+        let sets = groups.map { (group) -> Set<Character> in
+            var freq = Frequency<Character>()
+            for member in group {
+                for char in member {
+                    freq.increment(char)
+                }
+            }
+            
+            let matches = freq.values(where: { $0 == group.count})
+            return matches
+        }
+        
+        
+        let sum = sets.map(\.count).reduce(0, +)
+        return "\(sum)"
     }
     
     var testCasesB: [TestCase] = [
-        // Input test cases here
+        TestCase(TextInput("""
+                    abc
+                    
+                    a
+                    b
+                    c
+                    
+                    ab
+                    ac
+                    
+                    a
+                    a
+                    a
+                    a
+                    
+                    b
+                    """), expectedOutput: "6")
     ]
 }
