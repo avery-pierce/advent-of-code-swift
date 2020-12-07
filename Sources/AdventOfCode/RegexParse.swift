@@ -7,12 +7,12 @@
 
 import Foundation
 
-func regexParse(_ string: String) -> (String) -> [String] {
+func regexParse(_ string: String) -> (String) -> [String]? {
     let regex = try! NSRegularExpression(pattern: string, options: [])
     
-    return { (_ input: String) -> [String] in
+    return { (_ input: String) -> [String]? in
         let range = NSRange(location: 0, length: input.count)
-        let match = regex.firstMatch(in: input, options: [], range: range)!
+        guard let match = regex.firstMatch(in: input, options: [], range: range) else { return nil }
         var ranges = (0..<match.numberOfRanges).map { (index) -> NSRange in
             return match.range(at: index)
         }
@@ -20,7 +20,8 @@ func regexParse(_ string: String) -> (String) -> [String] {
         ranges.removeFirst()
         
         let nsString = NSString(string: input)
-        return ranges.map { (range) -> String in
+        return ranges.compactMap { (range) -> String? in
+            guard range.location < nsString.length else { return nil }
             return nsString.substring(with: range)
         }
     }
