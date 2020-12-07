@@ -7,9 +7,26 @@ class Puzzle1820: Puzzle {
     let name: String = "2018_20"
     
     func solveA(_ input: Input) -> String {
-        let result = findLongestPath(input.text)
-        print(result)
-        return "\(result.count - 2)"
+        let paths = uniquePaths(input.text)
+        
+        var shortestPathToReach = Frequency<GridCoordinate>()
+        for path in paths {
+            var currentLocation = GridCoordinate.zero
+            let directions = path.map(vector(for:))
+            for (i, direction) in directions.enumerated() {
+                let steps = i
+                currentLocation = currentLocation.moved(by: direction)
+                if shortestPathToReach[currentLocation] == 0 && currentLocation != .zero {
+                    shortestPathToReach[currentLocation] = steps
+                } else if shortestPathToReach[currentLocation] > steps {
+                    shortestPathToReach[currentLocation] = steps
+                }
+            }
+        }
+        
+        let longestPath = shortestPathToReach.mostFrequent!
+        let longest = shortestPathToReach[longestPath]
+        return "\(longest)"
     }
     
     var testCasesA: [TestCase] = [
@@ -17,6 +34,7 @@ class Puzzle1820: Puzzle {
         TestCase(TextInput("^ESSWWN(E|NNENN(EESS(WNSE|)SSS|WWWSSSSE(SW|NNNE)))$"), expectedOutput: "23"),
         TestCase(TextInput("^WSSEESWWWNW(S|NENNEEEENN(ESSSSW(NWSW|SSEN)|WSWWN(E|WWS(E|SS))))$"), expectedOutput: "31"),
         TestCase(TextInput("^WNE(|NN|EEE)$"), expectedOutput: "6"),
+        TestCase(TextInput("^(E|SEN)$"), expectedOutput: "2"),
     ]
     
     func solveB(_ input: Input) -> String {
@@ -44,14 +62,16 @@ class Puzzle1820: Puzzle {
         let nsString = NSString(string: directions)
        
         let placeholderRange = ranges[0]
-        let optA = nsString.substring(with: ranges[1])
-        let optB = nsString.substring(with: ranges[2])
+        var set = Set<String>()
+        for range in ranges[1...] {
+            if range.location >= nsString.length { continue }
+            
+            let option = nsString.substring(with: range)
+            let result = nsString.replacingCharacters(in: placeholderRange, with: option)
+            set.insert(membersOf: uniquePaths(result))
+        }
         
-        let resultA = nsString.replacingCharacters(in: placeholderRange, with: optA)
-        let resultB = nsString.replacingCharacters(in: placeholderRange, with: optB)
-        
-        let set = uniquePaths(resultA)
-        return set.union(uniquePaths(resultB))
+        return set
     }
     
     func findLongestPath(_ directions: String) -> String {
@@ -80,5 +100,17 @@ class Puzzle1820: Puzzle {
         
         let result = nsString.replacingCharacters(in: placeholderRange, with: longerString)
         return findLongestPath(result)
+    }
+    
+    func vector(for direction: Character) -> GridVector {
+        switch direction {
+        case "N": return .north
+        case "S": return .south
+        case "E": return .east
+        case "W": return .south
+        case "^": return GridVector(dx: 0, dy: 0)
+        case "$": return GridVector(dx: 0, dy: 0)
+        default: fatalError("Unknown direction \(direction)")
+        }
     }
 }
