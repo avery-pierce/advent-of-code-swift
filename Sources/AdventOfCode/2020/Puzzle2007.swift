@@ -25,11 +25,32 @@ class Puzzle2007: Puzzle {
     ]
     
     func solveB(_ input: Input) -> String {
-        return "unsolved"
+        let rules = input.lines.map(Rule.init)
+        let nestedBagCount = BagFinder(rules).countBagsContained(in: "shiny gold")
+        return "\(nestedBagCount)"
     }
     
     var testCasesB: [TestCase] = [
-        // Input test cases here
+        TestCase(TextInput("""
+                    light red bags contain 1 bright white bag, 2 muted yellow bags.
+                    dark orange bags contain 3 bright white bags, 4 muted yellow bags.
+                    bright white bags contain 1 shiny gold bag.
+                    muted yellow bags contain 2 shiny gold bags, 9 faded blue bags.
+                    shiny gold bags contain 1 dark olive bag, 2 vibrant plum bags.
+                    dark olive bags contain 3 faded blue bags, 4 dotted black bags.
+                    vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.
+                    faded blue bags contain no other bags.
+                    dotted black bags contain no other bags.
+                    """), expectedOutput: "32"),
+        TestCase(TextInput("""
+                    shiny gold bags contain 2 dark red bags.
+                    dark red bags contain 2 dark orange bags.
+                    dark orange bags contain 2 dark yellow bags.
+                    dark yellow bags contain 2 dark green bags.
+                    dark green bags contain 2 dark blue bags.
+                    dark blue bags contain 2 dark violet bags.
+                    dark violet bags contain no other bags.
+                    """), expectedOutput: "126")
     ]
     
     struct Rule {
@@ -77,6 +98,27 @@ class Puzzle2007: Puzzle {
             let nestedContainers = set.flatMap(potentialBagContainers(for:))
             set.insert(membersOf: nestedContainers)
             return set
+        }
+        
+        func countBagsContained(in bagType: String) -> Int {
+            var counter = 0
+            let directlyContained = rules
+                .filter({ $0.container == bagType })
+                .map(\.contained)
+                .reduce(Frequency<String>(), { (freq, next) in
+                    var newFreq = freq
+                    for (key, value) in next {
+                        newFreq[key] += value
+                    }
+                    return newFreq
+                })
+            
+            for bag in directlyContained.uniqueValues {
+                let nestedBags = countBagsContained(in: bag) + 1 // add the bag itself
+                counter += nestedBags * directlyContained[bag]
+            }
+            
+            return counter
         }
     }
 }
