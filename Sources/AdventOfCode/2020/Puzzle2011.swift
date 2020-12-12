@@ -35,11 +35,33 @@ class Puzzle2011: Puzzle {
     ]
     
     func solveB(_ input: Input) -> String {
-        return "unsolved"
+        let grid = input.grid.mapValues { (char) -> Space in
+            switch char {
+            case "L": return .emptySeat
+            default: return .floor
+            }
+        }
+        
+        let sim = SeatSimulation2(grid)
+        sim.runUntilNoChanges()
+        let freq = Frequency(sim.state.values)
+        
+        return "\(freq[.filledSeat])"
     }
     
     var testCasesB: [TestCase] = [
-        // Input test cases here
+        TestCase(TextInput("""
+                    L.LL.LL.LL
+                    LLLLLLL.LL
+                    L.L.L..L..
+                    LLLL.LL.LL
+                    L.LL.LL.LL
+                    L.LLLLL.LL
+                    ..L.L.....
+                    LLLLLLLLLL
+                    L.LLLLLL.L
+                    L.LLLLL.LL
+                    """), expectedOutput: "26")
     ]
     
     class SeatSimulation {
@@ -102,6 +124,50 @@ class Puzzle2011: Puzzle {
             }
             
             return thisSeat
+        }
+    }
+    
+    class SeatSimulation2: SeatSimulation {
+        override func newState(of coord: GridCoordinate) -> Space {
+            let thisSeat = seat(at: coord)
+            
+            let visibleSeats = seats(visibleFrom: coord)
+            
+            if (thisSeat == .emptySeat && visibleSeats[.filledSeat] == 0) {
+                return .filledSeat
+            }
+            
+            if (thisSeat == .filledSeat && visibleSeats[.filledSeat] >= 5) {
+                return .emptySeat
+            }
+            
+            return thisSeat
+        }
+        
+        func seats(visibleFrom coord: GridCoordinate) -> Frequency<Space> {
+            let allDirections: [GridVector] = [
+                .up,
+                .down,
+                .left,
+                .right,
+                .up + .left,
+                .up + .right,
+                .down + .left,
+                .down + .right,
+            ]
+            
+            let seats = allDirections.map({ firstSeat(visibleFrom: coord, direction: $0) })
+            return Frequency(seats)
+        }
+        
+        func firstSeat(visibleFrom coord: GridCoordinate, direction: GridVector) -> Space {
+            var checkingCoord = coord.moved(by: direction)
+            
+            while state[checkingCoord] == .floor {
+                checkingCoord = checkingCoord.moved(by: direction)
+            }
+            
+            return seat(at: checkingCoord)
         }
     }
     
