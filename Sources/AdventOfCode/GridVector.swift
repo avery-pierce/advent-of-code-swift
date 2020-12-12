@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct GridVector {
+struct GridVector: Equatable, Hashable {
     var dx: Int
     var dy: Int
 }
