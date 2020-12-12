@@ -33,17 +33,65 @@ extension GridVector {
     }
 }
 
+extension GridVector {
+    func quarterTurnedLeft() -> GridVector {
+        // Reminder: The grid is upside down.
+        // North is -1, and South is +1
+        var newVector = self
+        newVector.dx = dy
+        newVector.dy = dx * -1
+        return newVector
+    }
+    
+    mutating func quarterTurnLeft() {
+        self = quarterTurnedLeft()
+    }
+    
+    func quarterTurnedRight() -> GridVector {
+        // Reminder: The grid is upside down.
+        // North is -1, and South is +1
+        var newVector = self
+        newVector.dx = dy * -1
+        newVector.dy = dx
+        return newVector
+    }
+    
+    mutating func quarterTurnRight() {
+        self = quarterTurnedRight()
+    }
+}
+
 extension GridCoordinate {
-    func moved(by vector: GridVector) -> GridCoordinate {
+    func moved(_ vector: GridVector) -> GridCoordinate {
         var newCoord = self
         newCoord.x += vector.dx
         newCoord.y += vector.dy
         return newCoord
+    }
+    
+    func moved(by vector: GridVector) -> GridCoordinate {
+        return moved(vector)
+    }
+    
+    mutating func move(_ vector: GridVector) {
+        self = moved(by: vector)
     }
 }
 
 extension GridVector {
     static func + (left: GridVector, right: GridVector) -> GridVector {
         return GridVector(dx: left.dx + right.dx, dy: left.dy + right.dy)
+    }
+    
+    static func += (left: inout GridVector, right: GridVector) {
+        left = left + right
+    }
+    
+    static func * (left: GridVector, right: Int) -> GridVector {
+        return left.multiplied(by: right)
+    }
+    
+    static func *= (left: inout GridVector, right: Int) {
+        left = left * right
     }
 }

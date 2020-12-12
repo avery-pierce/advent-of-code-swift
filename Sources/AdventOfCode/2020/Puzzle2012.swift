@@ -49,102 +49,60 @@ class Puzzle2012: Puzzle {
         var facingDirection: GridVector = .east
         
         func perform(_ instruction: Instruction) {
+            let value = instruction.value
             switch instruction.operation {
             case .N:
-                location = location.moved(by: GridVector.north.multiplied(by: instruction.value))
+                location.move(.north * value)
             case .S:
-                location = location.moved(by: GridVector.south.multiplied(by: instruction.value))
+                location.move(.south * value)
             case .E:
-                location = location.moved(by: GridVector.east.multiplied(by: instruction.value))
+                location.move(.east * value)
             case .W:
-                location = location.moved(by: GridVector.west.multiplied(by: instruction.value))
+                location.move(.west * value)
             case .L:
                 let turns = instruction.value / 90
                 for _ in 0..<turns {
-                    turnLeft()
+                    facingDirection.quarterTurnLeft()
                 }
             case .R:
                 let turns = instruction.value / 90
                 for _ in 0..<turns {
-                    turnRight()
+                    facingDirection.quarterTurnRight()
                 }
             case .F:
-                location = location.moved(by: facingDirection.multiplied(by: instruction.value))
-            }
-        }
-        
-        func turnLeft() {
-            switch facingDirection {
-            case .east:
-                facingDirection = .north
-            case .north:
-                facingDirection = .west
-            case .west:
-                facingDirection = .south
-            case .south:
-                facingDirection = .east
-            default:
-                break
-            }
-        }
-        
-        func turnRight() {
-            switch facingDirection {
-            case .east:
-                facingDirection = .south
-            case .north:
-                facingDirection = .east
-            case .west:
-                facingDirection = .north
-            case .south:
-                facingDirection = .west
-            default:
-                break
+                location.move(facingDirection * value)
             }
         }
     }
     
     class ShipSimulation2 {
         var location: GridCoordinate = .zero
-        var waypoint: GridVector = GridVector.north + GridVector.east.multiplied(by: 10)
+        var waypoint: GridVector = .north + (.east * 10)
         
         func perform(_ instruction: Instruction) {
+            let value = instruction.value
             switch instruction.operation {
             case .N:
-                waypoint = waypoint + GridVector.north.multiplied(by: instruction.value)
+                waypoint += .north * value
             case .S:
-                waypoint = waypoint + GridVector.south.multiplied(by: instruction.value)
+                waypoint += .south * value
             case .E:
-                waypoint = waypoint + GridVector.east.multiplied(by: instruction.value)
+                waypoint += .east * value
             case .W:
-                waypoint = waypoint + GridVector.west.multiplied(by: instruction.value)
+                waypoint += .west * value
             case .L:
                 let turns = instruction.value / 90
                 for _ in 0..<turns {
-                    turnLeft()
+                    waypoint.quarterTurnLeft()
                 }
             case .R:
                 let turns = instruction.value / 90
                 for _ in 0..<turns {
-                    turnRight()
+                    waypoint.quarterTurnRight()
                 }
             case .F:
-                location = location.moved(by: waypoint.multiplied(by: instruction.value))
+                location.move(waypoint * value)
             }
-        }
-        
-        func turnLeft() {
-            var newWaypoint = waypoint
-            newWaypoint.dx = waypoint.dy
-            newWaypoint.dy = waypoint.dx * -1
-            waypoint = newWaypoint
-        }
-        
-        func turnRight() {
-            var newWaypoint = waypoint
-            newWaypoint.dx = waypoint.dy * -1
-            newWaypoint.dy = waypoint.dx
-            waypoint = newWaypoint
         }
     }
     
