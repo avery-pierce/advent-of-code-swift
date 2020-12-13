@@ -33,7 +33,7 @@ class Puzzle2013: Puzzle {
                 return(int, offset: i)
             }
         
-        let result = t2(ints)
+        let result = contestSolution(ints)
         return "\(result)"
     }
     
@@ -64,6 +64,20 @@ class Puzzle2013: Puzzle {
                     """), expectedOutput: "1202161486"),
     ]
     
+    func contestSolution(_ schedule: [(Int, offset: Int)]) -> Int {
+        var checkingSchedule = [(Int, offset: Int)]()
+        var s = 0
+        var p = 1
+        for bus in schedule {
+            checkingSchedule.append(bus)
+            let match = looper(checkingSchedule, startingAt: s, iteration: p)
+            s = match
+            p = p * bus.0
+        }
+        return s
+    }
+    
+    /// isterate the schedule until the time meets the criteria set by the contest
     func looper(_ schedule: [(Int, offset: Int)], startingAt: Int = 0, iteration: Int) -> Int {
         var currentTime = startingAt
         while true {
@@ -74,60 +88,7 @@ class Puzzle2013: Puzzle {
         }
     }
     
-    func t1(_ schedule: [(Int, offset: Int)]) -> Int {
-        let firstResult = schedule[0].0
-        return looper(schedule, iteration: firstResult)
-    }
-    
-    func t2(_ schedule: [(Int, offset: Int)]) -> Int {
-        let firstResult = schedule[0].0
-        let first2 = Array(schedule[0...1])
-        let s2 = looper(first2, startingAt: 0, iteration: firstResult)
-        let p2 = first2.map(\.0).reduce(1, *)
-        guard schedule.count > 2 else { return s2 }
-        
-        let first3 = Array(schedule[0...2])
-        let s3 = looper(first3, startingAt: s2, iteration: p2)
-        let p3 = first3.map(\.0).reduce(1, *)
-        guard schedule.count > 3 else { return s3 }
-        
-        let first4 = Array(schedule[0...3])
-        let s4 = looper(first4, startingAt: s3, iteration: p3)
-        let p4 = first4.map(\.0).reduce(1, *)
-        guard schedule.count > 4 else  { return s4 }
-        
-        let first5 = Array(schedule[0...4])
-        let s5 = looper(first5, startingAt: s4, iteration: p4)
-        let p5 = first5.map(\.0).reduce(1, *)
-        guard schedule.count > 5 else  { return s5 }
-        
-        let first6 = Array(schedule[0...5])
-        let s6 = looper(first6, startingAt: s5, iteration: p5)
-        let p6 = first6.map(\.0).reduce(1, *)
-        guard schedule.count > 6 else  { return s6 }
-        
-        let first7 = Array(schedule[0...6])
-        let s7 = looper(first7, startingAt: s6, iteration: p6)
-        let p7 = first6.map(\.0).reduce(1, *)
-        guard schedule.count > 7 else  { return s7 }
-        
-        let first8 = Array(schedule[0...7])
-        let s8 = looper(first8, startingAt: s7, iteration: p7)
-        let p8 = first6.map(\.0).reduce(1, *)
-        guard schedule.count > 8 else  { return s8 }
-        
-        let first9 = Array(schedule[0...8])
-        let s9 = looper(first9, startingAt: s8, iteration: p8)
-        let p9 = first6.map(\.0).reduce(1, *)
-        guard schedule.count > 9 else  { return s9 }
-        
-        return 0
-        
-    }
-    
-    // first3: [(17, offset: 0), (13, offset: 2), (19, offset: 3)], s2: 102, p2: 221, s3: 3417
-
-    
+    /// Returns whether this time meets the criteria set by the contest
     func check(_ t: Int, schedule: [(Int, offset: Int)]) -> Bool {
         return schedule.allSatisfy { (time, offset) -> Bool in
             return (t + offset) % time == 0
