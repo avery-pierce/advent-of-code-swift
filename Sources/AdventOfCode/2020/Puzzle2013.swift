@@ -10,9 +10,7 @@ class Puzzle2013: Puzzle {
         let ints = schedules.compactMap(Int.init)
         
         let pairs = ints.map({ return ($0, ($0 - currentTime % $0)) })
-        print(pairs)
         let next = pairs.min(by: { $0.1 < $1.1 })!
-        print(next)
         return "\(next.0 * next.1)"
     }
     
