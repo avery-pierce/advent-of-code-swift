@@ -75,13 +75,12 @@ class FileInput: DataInput {
 
 extension Input {
     var grid: [GridCoordinate: Character] {
-        var result = [GridCoordinate: Character]()
-        for (y, line) in lines.enumerated() {
-            for (x, character) in line.enumerated() {
-                let coord = GridCoordinate(x: x, y: y)
-                result[coord] = character
-            }
-        }
-        return result
+        return lines.characterGrid
+    }
+}
+
+extension Input {
+    var sections: [[String]] {
+        return lines.split(separator: "").map(Array.init)
     }
 }

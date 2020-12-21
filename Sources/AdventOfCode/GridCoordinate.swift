@@ -68,3 +68,16 @@ extension GridCoordinate {
         }
     }
 }
+
+extension Array where Element == String {
+    var characterGrid: [GridCoordinate: Character] {
+        var result = [GridCoordinate: Character]()
+        for (y, line) in self.enumerated() {
+            for (x, character) in line.enumerated() {
+                let coord = GridCoordinate(x: x, y: y)
+                result[coord] = character
+            }
+        }
+        return result
+    }
+}
