@@ -143,7 +143,6 @@ class Puzzle2022: Puzzle {
         func playUntilWinner() {
             while !isGameOver {
                 captureSnapshot()
-//                print("game \(gameNumber): \(previousSnapshots.count) turns")
                 takeTurn()
             }
         }
