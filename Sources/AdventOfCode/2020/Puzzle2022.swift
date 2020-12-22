@@ -129,8 +129,6 @@ class Puzzle2022: Puzzle {
             }
         }
         
-        var gameNumber: Int = 1
-        var numberOfUniqueSubGames: Int = 0
         var previousSnapshots = Set<Snapshot>()
         let player1: Player
         let player2: Player
@@ -172,7 +170,6 @@ class Puzzle2022: Puzzle {
                 }
                 
                 let recursiveGame = RecursiveGameSimulation(player1: newPlayer1, player2: newPlayer2)
-                recursiveGame.gameNumber = gameNumber + 1
                 recursiveGame.playUntilWinner()
                 
                 if recursiveGame.winner === newPlayer1 {
