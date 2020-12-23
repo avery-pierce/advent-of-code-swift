@@ -6,11 +6,11 @@ class Puzzle2023: Puzzle {
     
     func solveA(_ input: Input) -> String {
         let cups = input.text.map(String.init).compactMap(Int.init)
-        let sim = CupSimulation2(cups)
+        let sim = CupSimulation(cups)
         for _ in (0..<100) {
             sim.doMove()
         }
-        return sim.solve1()
+        return sim.solutionA()
     }
     
     var testCasesA: [TestCase] = [
@@ -19,32 +19,24 @@ class Puzzle2023: Puzzle {
     
     func solveB(_ input: Input) -> String {
         var cups = input.text.map(String.init).compactMap(Int.init)
-        cups.append(contentsOf: ((cups.max()! + 1)..<1_000_000))
-        print("Number of cups", cups.count)
+        cups.append(contentsOf: ((cups.max()! + 1)...1_000_000))
         
-        let sim = CupSimulation2(cups)
-        
-        for i in 0..<10_000_000 {
-            sim.doMove()
-            if i % 100 == 0 {
-                print("Move \(i)")
-            }
-        }
-        
-        return ""
+        let sim = CupSimulation(cups)
+        sim.move(times: 10_000_000)
+        return sim.solutionB()
     }
     
     var testCasesB: [TestCase] = [
         TestCase(TextInput("389125467"), expectedOutput: "149245887792")
     ]
     
-    class CupSimulation2 {
+    class CupSimulation {
         var currentCup: Int
-        var cupAfter: [Int /* this cup */: Int /* Next cup */]
-        var highestCup: Int
+        let cupAfter: ClassyArray<Int>
+        let highestCup: Int
         
         init(_ cups: [Int]) {
-            cupAfter = [:]
+            cupAfter = ClassyArray(repeating: 0, count: cups.count + 1)
             for (i, cup) in cups.enumerated() {
                 let nextCupIndex = (i + 1) % cups.count
                 let nextCup = cups[nextCupIndex]
@@ -56,32 +48,32 @@ class Puzzle2023: Puzzle {
         }
         
         func destinationCup(excludingPickedUpCups pickedUpCups: [Int]) -> Int {
-            var expectedCup = currentCup
-            while true {
-                expectedCup -= 1
-                if (expectedCup < 1) {
-                    expectedCup = highestCup
+            var destination = currentCup - 1
+            while pickedUpCups.contains(destination) || destination < 1 {
+                destination -= 1
+                if destination < 1 {
+                    destination = highestCup
                 }
-                
-                if (!pickedUpCups.contains(expectedCup)) {
-                    return expectedCup
-                }
+            }
+            
+            return destination
+        }
+        
+        func move(times: Int) {
+            for _ in 0..<times {
+                doMove()
             }
         }
         
         func doMove() {
             let firstThreeCups = [
-                cupAfter[currentCup]!,
-                cupAfter[cupAfter[currentCup]!]!,
-                cupAfter[cupAfter[cupAfter[currentCup]!]!]!,
+                cupAfter[currentCup],
+                cupAfter[cupAfter[currentCup]],
+                cupAfter[cupAfter[cupAfter[currentCup]]],
             ]
             
             let destination = destinationCup(excludingPickedUpCups: firstThreeCups)
             let afterDestination = cupAfter[destination]
-            
-//            print("Taking 3 cups: \(firstThreeCups)")
-//            print("Destination Cup: \(destination)")
-            
             
             // fill in the gap where the three cups used to be
             cupAfter[currentCup] = cupAfter[firstThreeCups[2]]
@@ -96,15 +88,15 @@ class Puzzle2023: Puzzle {
         }
         
         func rotateCurrentCup() {
-            currentCup = cupAfter[currentCup]!
+            currentCup = cupAfter[currentCup]
         }
         
-        func solve1() -> String {
+        func solutionA() -> String {
             var output = [Int]()
-            var nextCup = cupAfter[1]!
+            var nextCup = cupAfter[1]
             for _ in (0..<8) {
                 output.append(nextCup)
-                nextCup = cupAfter[nextCup]!
+                nextCup = cupAfter[nextCup]
             }
             
            let chars = output
@@ -114,13 +106,32 @@ class Puzzle2023: Puzzle {
             return String(chars)
         }
         
-        var result: String {
+        func solutionB() -> String {
             let cupsAfter1 = [
-                cupAfter[1]!,
-                cupAfter[cupAfter[1]!]!,
+                cupAfter[1],
+                cupAfter[cupAfter[1]],
             ]
             let product = cupsAfter1.reduce(1, *)
             return "\(product)"
+        }
+    }
+    
+    class Classy<Element> {
+        var value: Element
+        init(_ value: Element) {
+            self.value = value
+        }
+    }
+    
+    class ClassyArray<Element> {
+        let array: [Classy<Element>]
+        init(repeating initialValue: Element, count: Int) {
+            array = Array(repeating: initialValue, count: count).map(Classy.init)
+        }
+        
+        subscript(_ i: Int) -> Element {
+            get { return array[i].value }
+            set { array[i].value = newValue}
         }
     }
 }
