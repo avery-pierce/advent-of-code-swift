@@ -5,7 +5,10 @@ class Puzzle1801: Puzzle {
     let name: String = "2018_01"
     
     func solveA(_ input: Input) -> String {
-        let ints = input.lines.compactMap(Int.init)
+        let ints = input.lines
+            .map({ $0.trimmingCharacters(in: .whitespaces) })
+            .compactMap(Int.init)
+        
         let sum = ints.reduce(0, +)
         return "\(sum)"
     }
@@ -23,7 +26,7 @@ class Puzzle1801: Puzzle {
         var frequencies = Set<Int>([0])
         while true {
             let index = counter % input.lines.count
-            let nextAdjustment = Int(input.lines[index])!
+            let nextAdjustment = Int(input.lines[index].trimmingCharacters(in: .whitespaces))!
             state += nextAdjustment
             if frequencies.contains(state) {
                 break
