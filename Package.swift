@@ -25,7 +25,7 @@ let package = Package(
             name: "AdventOfCodeTests",
             dependencies: ["AdventOfCode"]),
         .target(
-            name: "AoC2018",
+            name: "Puzzles2018",
             dependencies: ["AdventOfCode"]),
     ]
 )
