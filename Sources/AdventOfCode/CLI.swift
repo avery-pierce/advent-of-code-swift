@@ -143,67 +143,9 @@ func roundToDecimalPlaces(_ number: Double, decimalPlaces: Int) -> Double {
     return rounded / multiplier
 }
 
-func gatherPuzzles() -> [Puzzle] {
-    return [
-        Puzzle1901(),
-        Puzzle1902(),
-        Puzzle1903(),
-        Puzzle1904(),
-        Puzzle1905(),
-        Puzzle1906(),
-        Puzzle1907(),
-        Puzzle1908(),
-        Puzzle1909(),
-        Puzzle1910(),
-        Puzzle1911(),
-        Puzzle1912(),
-        Puzzle1913(),
-        Puzzle1914(),
-        Puzzle1915(),
-        Puzzle1916(),
-        Puzzle1917(),
-        Puzzle1918(),
-        Puzzle1919(),
-        Puzzle1920(),
-        Puzzle1921(),
-        Puzzle1922(),
-        Puzzle1923(),
-        Puzzle1924(),
-        Puzzle1925(),
-
-        Puzzle2001(),
-        Puzzle2002(),
-        Puzzle2003(),
-        Puzzle2004(),
-        Puzzle2005(),
-        Puzzle2006(),
-        Puzzle2007(),
-        Puzzle2008(),
-        Puzzle2009(),
-        Puzzle2010(),
-        Puzzle2011(),
-        Puzzle2012(),
-        Puzzle2013(),
-        Puzzle2014(),
-        Puzzle2015(),
-        Puzzle2016(),
-        Puzzle2017(),
-        Puzzle2018(),
-        Puzzle2019(),
-        Puzzle2020(),
-        Puzzle2021(),
-        Puzzle2022(),
-        Puzzle2023(),
-        Puzzle2024(),
-        Puzzle2025(),
-    ]
-}
-
 struct PlainError: Error {
     var message: String
     init(_ message: String) {
         self.message = message
     }
 }
-
-
