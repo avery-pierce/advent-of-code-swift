@@ -1,5 +1,6 @@
 
 import Foundation
+import AdventOfCode
 
 class Puzzle1815: Puzzle {
     let name: String = "2018_15"

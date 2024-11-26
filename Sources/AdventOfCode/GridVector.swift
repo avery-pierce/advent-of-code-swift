@@ -7,12 +7,17 @@
 
 import Foundation
 
-struct GridVector: Equatable, Hashable {
-    var dx: Int
-    var dy: Int
+public struct GridVector: Equatable, Hashable {
+    public var dx: Int
+    public var dy: Int
+    
+    public init(dx: Int, dy: Int) {
+        self.dx = dx
+        self.dy = dy
+    }
 }
 
-extension GridVector {
+public extension GridVector {
     static let north = GridVector(dx: 0, dy: -1)
     static let south = GridVector(dx: 0, dy: 1)
     static let east = GridVector(dx: 1, dy: 0)
@@ -24,7 +29,7 @@ extension GridVector {
     static let right = east
 }
 
-extension GridVector {
+public extension GridVector {
     func multiplied(by factor: Int) -> GridVector {
         var newVector = self
         newVector.dx = self.dx * factor
@@ -33,7 +38,7 @@ extension GridVector {
     }
 }
 
-extension GridVector {
+public extension GridVector {
     func quarterTurnedLeft() -> GridVector {
         // Reminder: The grid is upside down.
         // North is -1, and South is +1
@@ -61,7 +66,7 @@ extension GridVector {
     }
 }
 
-extension GridCoordinate {
+public extension GridCoordinate {
     func moved(_ vector: GridVector) -> GridCoordinate {
         var newCoord = self
         newCoord.x += vector.dx
@@ -78,7 +83,7 @@ extension GridCoordinate {
     }
 }
 
-extension GridVector {
+public extension GridVector {
     static func + (left: GridVector, right: GridVector) -> GridVector {
         return GridVector(dx: left.dx + right.dx, dy: left.dy + right.dy)
     }

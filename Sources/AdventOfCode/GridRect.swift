@@ -1,29 +1,29 @@
 import Foundation
 
-struct GridRect: Hashable {
-    var origin: GridCoordinate
-    var size: GridSize
+public struct GridRect: Hashable {
+    public var origin: GridCoordinate
+    public var size: GridSize
     
-    var minX: Int { origin.x }
-    var minY: Int { origin.y }
-    var maxX: Int { origin.x + size.width }
-    var maxY: Int { origin.y + size.height }
+    public var minX: Int { origin.x }
+    public var minY: Int { origin.y }
+    public var maxX: Int { origin.x + size.width }
+    public var maxY: Int { origin.y + size.height }
     
-    var width: Int { size.width }
-    var height: Int { size.height }
-    var area: Int { width * height }
+    public var width: Int { size.width }
+    public var height: Int { size.height }
+    public var area: Int { width * height }
     
-    init(_ origin: GridCoordinate, _ size: GridSize) {
+    public init(_ origin: GridCoordinate, _ size: GridSize) {
         self.origin = origin
         self.size = size
     }
     
-    init(x: Int, y: Int, width: Int, height: Int) {
+    public init(x: Int, y: Int, width: Int, height: Int) {
         self.origin = GridCoordinate(x: x, y: y)
         self.size = GridSize(width: width, height: height)
     }
     
-    init(x1: Int, y1: Int, x2: Int, y2: Int) {
+    public init(x1: Int, y1: Int, x2: Int, y2: Int) {
         let xMin = min(x1, x2)
         let yMin = min(y1, y2)
         self.origin = GridCoordinate(x: xMin, y: yMin)
@@ -33,7 +33,7 @@ struct GridRect: Hashable {
         self.size = GridSize(width: width, height: height)
     }
     
-    var coordinates: Set<GridCoordinate> {
+    public var coordinates: Set<GridCoordinate> {
         var set = Set<GridCoordinate>()
         for x in (minX...maxX) {
             for y in (minY...maxY) {
@@ -44,7 +44,7 @@ struct GridRect: Hashable {
     }
 }
 
-extension GridRect {
+public extension GridRect {
     
     /// Creates a rect in the form `x,y: wxh`
     init(descriptor: String) {
@@ -54,14 +54,14 @@ extension GridRect {
     }
 }
 
-extension GridRect {
+public extension GridRect {
     init(left: Int, top: Int, width: Int, height: Int) {
         self.origin = GridCoordinate(left: left, top: top)
         self.size = GridSize(width: width, height: height)
     }
 }
 
-extension GridRect {
+public extension GridRect {
     static var zero = GridRect(x: 0, y: 0, width: 0, height: 0)
     
     static func enclosing(_ coords: [GridCoordinate]) -> GridRect {
@@ -90,7 +90,7 @@ extension GridRect {
     }
 }
 
-extension GridRect {
+public extension GridRect {
     func render(_ renderChar: (GridCoordinate) -> Character) -> String {
         let lines = (minY...maxY).map { (y) -> String in
             let chars = (minX...maxX)

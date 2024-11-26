@@ -7,17 +7,17 @@
 
 import Foundation
 
-struct GridCoordinate: Hashable, Equatable {
-    var x: Int
-    var y: Int
+public struct GridCoordinate: Hashable, Equatable {
+    public var x: Int
+    public var y: Int
     
-    init(x: Int, y: Int) {
+    public init(x: Int, y: Int) {
         self.x = x
         self.y = y
     }
 }
 
-extension GridCoordinate {
+public extension GridCoordinate {
     
     /// Creates a coodinate in the form `x, y`
     init(descriptor: String) {
@@ -27,7 +27,7 @@ extension GridCoordinate {
     }
 }
 
-extension GridCoordinate {
+public extension GridCoordinate {
     
     /// alias to `y`
     var top: Int {
@@ -46,7 +46,7 @@ extension GridCoordinate {
     }
 }
 
-extension GridCoordinate {
+public extension GridCoordinate {
     func manhattanDistance(to coordinate: GridCoordinate) -> Int {
         let dx = abs(coordinate.x - self.x)
         let dy = abs(coordinate.y - self.y)
@@ -54,11 +54,11 @@ extension GridCoordinate {
     }
 }
 
-extension GridCoordinate {
+public extension GridCoordinate {
     static var zero = GridCoordinate(x: 0, y: 0)
 }
 
-extension GridCoordinate {
+public extension GridCoordinate {
     // A sort function
     static func inReadingOrder(_ lhs: GridCoordinate, _ rhs: GridCoordinate) -> Bool {
         if lhs.y == rhs.y {
@@ -69,7 +69,7 @@ extension GridCoordinate {
     }
 }
 
-extension Array where Element == String {
+public extension Array where Element == String {
     var characterGrid: [GridCoordinate: Character] {
         var result = [GridCoordinate: Character]()
         for (y, line) in self.enumerated() {

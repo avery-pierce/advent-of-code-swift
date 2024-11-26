@@ -7,7 +7,7 @@
 
 import Foundation
 
-func regexParse(_ string: String) -> (String) -> [String]? {
+public func regexParse(_ string: String) -> (String) -> [String]? {
     let regex = try! NSRegularExpression(pattern: string, options: [])
     
     return { (_ input: String) -> [String]? in

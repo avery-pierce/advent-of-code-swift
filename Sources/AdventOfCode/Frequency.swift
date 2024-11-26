@@ -7,18 +7,18 @@
 
 import Foundation
 
-struct Frequency<T: Hashable> {
+public struct Frequency<T: Hashable> {
     private var counts = [T: Int]()
     
-    init() {}
+    public init() {}
     
-    init<S: Sequence>(_ sequence: S) where S.Element == T {
+    public init<S: Sequence>(_ sequence: S) where S.Element == T {
         for element in sequence {
             increment(element)
         }
     }
     
-    subscript(_ value: T) -> Int {
+    public subscript(_ value: T) -> Int {
         get {
             return counts[value] ?? 0
         }
@@ -27,19 +27,19 @@ struct Frequency<T: Hashable> {
         }
     }
     
-    mutating func increment(_ value: T) {
+    public mutating func increment(_ value: T) {
         self[value] += 1
     }
     
-    mutating func decrement(_ value: T) {
+    public mutating func decrement(_ value: T) {
         self[value] = max(self[value] - 1, 0)
     }
     
-    var uniqueValues: Set<T> {
+    public var uniqueValues: Set<T> {
         return Set(counts.keys)
     }
     
-    var values: [T] {
+    public var values: [T] {
         var vals = [T]()
         for (value, count) in counts {
             for _ in 1...count {
@@ -49,18 +49,18 @@ struct Frequency<T: Hashable> {
         return vals
     }
     
-    func values(where predicate: (Int) -> Bool) -> Set<T> {
+    public func values(where predicate: (Int) -> Bool) -> Set<T> {
         return Set(counts.filter({ return predicate($0.value) }).keys)
     }
     
-    var mostFrequent: T? {
+    public var mostFrequent: T? {
         return counts.max { (left, right) -> Bool in
             return left.value < right.value
         }?.key
     }
 }
 
-extension Frequency {
+public extension Frequency {
     mutating func increment<C: Collection>(membersOf collection: C) where C.Element == T {
         for member in collection {
             increment(member)

@@ -1,58 +1,58 @@
 import Foundation
 
-protocol Input {
+public protocol Input {
     var data: Data { get }
     var text: String { get }
     var lines: [String] { get }
 }
 
-class DataInput: Input {
-    var data: Data
-    init(_ data: Data) {
+public class DataInput: Input {
+    public var data: Data
+    public init(_ data: Data) {
         self.data = data
     }
     
-    lazy var text: String = {
+    public lazy var text: String = {
         return String(data: data, encoding: .utf8)!
     }()
     
-    lazy var lines: [String] = {
+    public lazy var lines: [String] = {
         return text.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
     }()
 }
 
-class TextInput: Input {
-    var text: String
-    init(_ text: String) {
+public class TextInput: Input {
+    public var text: String
+    public init(_ text: String) {
         self.text = text
     }
     
-    lazy var data: Data = {
+    public lazy var data: Data = {
         return text.data(using: .utf8)!
     }()
     
-    lazy var lines: [String] = {
+    public lazy var lines: [String] = {
         return text.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
     }()
 }
 
-class LinesInput: Input {
-    var lines: [String]
-    init(_ lines: [String]) {
+public class LinesInput: Input {
+    public var lines: [String]
+    public init(_ lines: [String]) {
         self.lines = lines.map({ $0.trimmingCharacters(in: .newlines )})
     }
     
-    lazy var text: String = {
+    public lazy var text: String = {
         return lines.joined(separator: "\n")
     }()
     
-    lazy var data: Data = {
+    public lazy var data: Data = {
         return text.data(using: .utf8)!
     }()
 }
 
-class STDIN: LinesInput {
-    init() {
+public class STDIN: LinesInput {
+    public init() {
         var lines = [String]()
         while let line = readLine(strippingNewline: true) {
             lines.append(line)
@@ -61,25 +61,25 @@ class STDIN: LinesInput {
     }
 }
 
-class FileInput: DataInput {
-    init(_ url: URL) throws {
+public class FileInput: DataInput {
+    public init(_ url: URL) throws {
         let data = try Data(contentsOf: url)
         super.init(data)
     }
     
-    init(path: String) {
+    public init(path: String) {
         let data = FileManager.default.contents(atPath: path)!
         super.init(data)
     }
 }
 
-extension Input {
+public extension Input {
     var grid: [GridCoordinate: Character] {
         return lines.characterGrid
     }
 }
 
-extension Input {
+public extension Input {
     var sections: [[String]] {
         return lines.split(separator: "").map(Array.init)
     }

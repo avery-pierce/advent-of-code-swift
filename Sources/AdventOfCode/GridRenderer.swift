@@ -7,18 +7,18 @@
 
 import Foundation
 
-class GridRenderer {
-    let coordinates: [GridCoordinate]
-    var rect: GridRect?
-    init(_ coordinates: [GridCoordinate], in rect: GridRect? = nil) {
+public class GridRenderer {
+    public let coordinates: [GridCoordinate]
+    public var rect: GridRect?
+    public init(_ coordinates: [GridCoordinate], in rect: GridRect? = nil) {
         self.coordinates = coordinates
         self.rect = rect
     }
     
-    var emptyCellChar = Character(" ")
-    var filledCellChar = Character("#")
+    public var emptyCellChar = Character(" ")
+    public var filledCellChar = Character("#")
     
-    func render() -> String {
+    public func render() -> String {
         let grid = rect ?? GridRect.enclosing(coordinates)
         
         print("grid complete: width: \(grid.size.width), \(grid.size.height)")

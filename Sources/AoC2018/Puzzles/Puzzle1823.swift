@@ -1,8 +1,9 @@
 
 import Foundation
+import AdventOfCode
 
-class Puzzle1825: Puzzle {
-    let name: String = "2018_25"
+class Puzzle1823: Puzzle {
+    let name: String = "2018_23"
     
     func solveA(_ input: Input) -> String {
         return "unsolved"

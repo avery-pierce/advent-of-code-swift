@@ -1,10 +1,10 @@
 import Foundation
 
-struct TestCase {
-    var input: Input
-    var expectedOutput: String
+public struct TestCase {
+    public var input: Input
+    public var expectedOutput: String
     
-    init(_ input: Input, expectedOutput: String) {
+    public init(_ input: Input, expectedOutput: String) {
         self.input = input
         self.expectedOutput = expectedOutput
     }

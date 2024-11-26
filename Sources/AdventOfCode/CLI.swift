@@ -1,17 +1,22 @@
 import Foundation
 import ArgumentParser
 
-struct AdventOfCode: ParsableCommand {
+public struct Main: ParsableCommand {
     
-    static let inputCacheFolderPath = "./inputCache"
+    public static let inputCacheFolderPath = "./inputCache"
+    
+    public static var puzzles: [Puzzle] = []
+    
+    public init() {
+    }
     
     @Flag(name: .shortAndLong, help: "List all the puzzles")
-    var list = false
+    public var list = false
     
     @Argument(help: "The puzzle to execute")
-    var puzzle: String?
+    public var puzzle: String?
     
-    mutating func run() throws {
+    public mutating func run() throws {
         if list {
             // Output a list of loaded puzzles, and exit
             printAllPuzzles()
@@ -22,16 +27,16 @@ struct AdventOfCode: ParsableCommand {
             throw PlainError("Please enter a puzzle name. Use --list to list puzzles")
         }
         
-        guard let selectedPuzzle = selectPuzzle(named: puzzle) else {
+        guard let selectedPuzzle = Main.selectPuzzle(named: puzzle) else {
             throw PlainError("Could not find a puzzle named \(puzzle). Use --list to list puzzles")
         }
         
         printSolution(to: selectedPuzzle)
     }
     
-    func printAllPuzzles() {
+    public func printAllPuzzles() {
         print("Puzzles loaded:")
-        let puzzles = gatherPuzzles()
+        let puzzles = Main.puzzles
         puzzles.forEach { (puzzle) in
             if puzzle.hasTests {
                 print("  \(puzzle.name): \(puzzle.allTestsPass ? "✅" : "❌")")
@@ -41,7 +46,7 @@ struct AdventOfCode: ParsableCommand {
         }
     }
     
-    func printSolution(to puzzle: Puzzle) {
+    public func printSolution(to puzzle: Puzzle) {
         print("Solving \(puzzle.name)")
         let puzzleInput = getInput(for: puzzle)
         
@@ -76,7 +81,7 @@ struct AdventOfCode: ParsableCommand {
     }
     
     func getInput(for puzzle: Puzzle) -> Input {
-        let destinationPath = "\(AdventOfCode.inputCacheFolderPath)/\(puzzle.name).input.txt"
+        let destinationPath = "\(Main.inputCacheFolderPath)/\(puzzle.name).input.txt"
         if (FileManager.default.fileExists(atPath: destinationPath)) {
             return FileInput(path: destinationPath)
         }
@@ -92,8 +97,8 @@ struct AdventOfCode: ParsableCommand {
     }
     
     func createInputCacheFolderIfNeeded() {
-        guard FileManager.default.fileExists(atPath: AdventOfCode.inputCacheFolderPath) else {
-            try! FileManager.default.createDirectory(atPath: AdventOfCode.inputCacheFolderPath, withIntermediateDirectories: true, attributes: nil)
+        guard FileManager.default.fileExists(atPath: Main.inputCacheFolderPath) else {
+            try! FileManager.default.createDirectory(atPath: Main.inputCacheFolderPath, withIntermediateDirectories: true, attributes: nil)
             return
         }
     }
@@ -112,9 +117,11 @@ struct AdventOfCode: ParsableCommand {
             }
         }
     }
+    
+    static func selectPuzzle(named name: String) -> Puzzle? {
+        return puzzles.first(where: { $0.name == name })
+    }
 }
-
-AdventOfCode.main()
 
 func formatDuration(_ duration: TimeInterval) -> String {
     if (duration < 1) {
@@ -136,38 +143,8 @@ func roundToDecimalPlaces(_ number: Double, decimalPlaces: Int) -> Double {
     return rounded / multiplier
 }
 
-func selectPuzzle(named name: String) -> Puzzle? {
-    return gatherPuzzles().first(where: { $0.name == name })
-}
-
 func gatherPuzzles() -> [Puzzle] {
     return [
-        Puzzle1801(),
-        Puzzle1802(),
-        Puzzle1803(),
-        Puzzle1804(),
-        Puzzle1805(),
-        Puzzle1806(),
-        Puzzle1807(),
-        Puzzle1808(),
-        Puzzle1809(),
-        Puzzle1810(),
-        Puzzle1811(),
-        Puzzle1812(),
-        Puzzle1813(),
-        Puzzle1814(),
-        Puzzle1815(),
-        Puzzle1816(),
-        Puzzle1817(),
-        Puzzle1818(),
-        Puzzle1819(),
-        Puzzle1820(),
-        Puzzle1821(),
-        Puzzle1822(),
-        Puzzle1823(),
-        Puzzle1824(),
-        Puzzle1825(),
-
         Puzzle1901(),
         Puzzle1902(),
         Puzzle1903(),

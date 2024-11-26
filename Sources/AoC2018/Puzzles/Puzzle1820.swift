@@ -1,5 +1,6 @@
 
 import Foundation
+import AdventOfCode
 
 let regex = try! NSRegularExpression(pattern: "\\(([NSEW]*)\\|([NSEW]*)(?:\\|([NSEW]*))?\\)", options: [])
 

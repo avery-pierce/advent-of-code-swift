@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension Set {
+public extension Set {
     mutating func insert<C: Collection>(membersOf collection: C) where C.Element == Element {
         for member in collection {
             insert(member)

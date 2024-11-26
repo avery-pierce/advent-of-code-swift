@@ -6,7 +6,7 @@
 //
 import Foundation
 
-protocol Puzzle {
+public protocol Puzzle {
     var name: String { get }
     
     func solveA(_ input: Input) -> String
@@ -16,7 +16,7 @@ protocol Puzzle {
     var testCasesB: [TestCase] { get }
 }
 
-extension Puzzle {
+public extension Puzzle {
     var hasTests: Bool {
         return testCasesA.count + testCasesB.count > 0
     }

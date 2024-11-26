@@ -1,5 +1,6 @@
 
 import Foundation
+import AdventOfCode
 
 class Puzzle1803: Puzzle {
     typealias Coordinate = GridCoordinate
