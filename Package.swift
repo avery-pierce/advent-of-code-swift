@@ -30,5 +30,8 @@ let package = Package(
         .target(
             name: "Puzzles2020",
             dependencies: ["AdventOfCode"]),
+        .target(
+            name: "Puzzles2023",
+            dependencies: ["AdventOfCode"]),
     ]
 )
