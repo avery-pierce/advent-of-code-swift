@@ -143,7 +143,7 @@ func roundToDecimalPlaces(_ number: Double, decimalPlaces: Int) -> Double {
     return rounded / multiplier
 }
 
-struct PlainError: Error {
+public struct PlainError: Error {
     var message: String
     init(_ message: String) {
         self.message = message
