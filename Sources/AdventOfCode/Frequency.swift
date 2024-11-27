@@ -58,6 +58,10 @@ public struct Frequency<T: Hashable> {
             return left.value < right.value
         }?.key
     }
+    
+    public var total: Int {
+        return counts.values.reduce(0, +)
+    }
 }
 
 public extension Frequency {
@@ -72,4 +76,31 @@ public extension Frequency {
             decrement(member)
         }
     }
+}
+
+public extension Frequency {
+    static func + (left: Frequency<T>, right: Frequency<T>) -> Frequency<T> {
+        var result = Frequency<T>()
+        
+        for (key, count) in left.counts {
+            result[key] += count
+        }
+        
+        for (key, count) in right.counts {
+            result[key] += count
+        }
+        
+        return result
+    }
+    
+    static func * (left: Frequency<T>, right: Int) -> Frequency<T> {
+        var result = Frequency<T>()
+        
+        for (key, count) in left.counts {
+            result[key] = count * right
+        }
+        
+        return result
+    }
+    
 }
